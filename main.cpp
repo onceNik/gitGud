@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <cstdint>
+#include "Journal.h"
 
 //---------------------------------------------------------------------------
 /// Message types
@@ -109,17 +110,21 @@ typedef struct Forget {
 
 
 static uint32_t* schema = NULL;
-static void processDefineSchema(DefineSchema_t *s){
+static uint32_t schemaSize = 0;
+static void processDefineSchema(DefineSchema_t *s) {
+
   int i;
   printf("DefineSchema %d |", s->relationCount);
-  if ( schema == NULL) free(schema);
+  if (schema == NULL) free(schema);
   schema = (uint32_t*)malloc(sizeof(uint32_t)*s->relationCount);
-  
+  schemaSize = s->relationCount;
+
   for(i = 0; i < s->relationCount; i++) {
     printf(" %d ",s->columnCounts[i]);
     schema[i] = s->columnCounts[i];
   }
   printf("\n");
+
 }
 
 static void processTransaction(Transaction_t *t){
@@ -138,7 +143,7 @@ static void processTransaction(Transaction_t *t){
     reader+=sizeof(TransactionOperationInsert_t)+(sizeof(uint64_t)*o->rowCount*schema[o->relationId]);
   }
   printf("\n");
-  
+
 }
 static void processValidationQueries(ValidationQueries_t *v){
   printf("ValidationQueries %llu [%llu, %llu] %u\n", v->validationId, v->from, v->to, v->queryCount);
@@ -158,12 +163,13 @@ int main(int argc, char **argv) {
   MessageHead_t head;
   void *body = NULL;
   uint32_t len;
+  Journal** jtable;
 
     while(1){
       // Retrieve the message head
       if (read(0, &head, sizeof(head)) <= 0) { return -1; } // crude error handling, should never happen
       printf("HEAD LEN %u \t| HEAD TYPE %u \t| DESC ", head.messageLen, head.type);
-        
+
       // Retrieve the message body
       if (body != NULL) free(body);
       if (head.messageLen > 0 ){
@@ -171,19 +177,28 @@ int main(int argc, char **argv) {
       if (read(0, body, head.messageLen) <= 0) { printf("err");return -1; } // crude error handling, should never happen
       len-=(sizeof(head) + head.messageLen);
       }
-            
+
       // And interpret it
       switch (head.type) {
-         case Done: printf("\n");return 0;
-         case DefineSchema: processDefineSchema((DefineSchema_t*)body); break;
+         case Done: 
+		printf("\n");
+		return 0;
+         case DefineSchema: 
+		processDefineSchema((DefineSchema_t*)body);
+		jtable = new Journal*[schemaSize];
+		for (int i = 0 ; i < schemaSize ; i++) {
+			jtable[i] = new Journal(schema[i]);
+			printf("%d\n",schema[i]);
+		}
+		break;
          case Transaction: processTransaction((Transaction_t*)body); break;
          case ValidationQueries: processValidationQueries((ValidationQueries_t*)body); break;
          case Flush: processFlush((Flush_t*)body); break;
          case Forget: processForget((Forget_t*)body); break;
-         default: 
+         default:
          return -1; // crude error handling, should never happen
       }
     }
-    
+
   return 0;
 }

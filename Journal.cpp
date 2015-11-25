@@ -4,6 +4,7 @@ using namespace std;
 
 Journal::Journal(uint32_t columns) {
 	
+	rowSize = 2000;
 	columnSize = columns;
 	journal = new uint64_t*[rowSize];
 	for(uint64_t i = 0; i < rowSize; i++) {
@@ -21,7 +22,7 @@ Journal::~Journal() {
 	
 }
 
-Journal* Journal::createJournal(uint32_t columnSize) {}
+/*Journal* Journal::createJournal(uint32_t columnSize) {}
 
 bool Journal::insertJournalRecord() {}
 
@@ -31,7 +32,7 @@ List<kati> Journal::getJournalRecords() {}
 
 bool Journal::destroyJournal() {}
 
-bool Journal::increaseJournal() {										/* ΦΤΙΑΞΕ ΕΛΕΓΧΟΥΣ ΓΙΑ ΜΝΗΜΗ */
+bool Journal::increaseJournal() {
 	uint64_t newSize;
 	
 	newSize = 2 * rowSize;
@@ -54,6 +55,6 @@ bool Journal::increaseJournal() {										/* ΦΤΙΑΞΕ ΕΛΕΓΧΟΥΣ ΓΙ
 	journal = newJournal;
 	
 	return true;
-}
+}*/
 
 
