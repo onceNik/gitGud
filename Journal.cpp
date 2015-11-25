@@ -2,25 +2,26 @@
 
 using namespace std;
 
-
 Journal::Journal(uint32_t columns) {
+	
 	columnSize = columns;
-	createJournal(columnSize);
-	
-	}
-
-Journal::~Journal() {}
-
-Journal* Journal::createJournal(uint32_t columnSize) {
-	
 	journal = new uint64_t*[rowSize];
 	for(uint64_t i = 0; i < rowSize; i++) {
 		journal[i] = new uint64_t[columnSize];
 	}
 	
-	return j
+}
+
+Journal::~Journal() {
+	
+	for(uint64_t i = 0; i < rowSize; i++) {
+		delete[] journal[i];
+	}
+	delete[] journal;
 	
 }
+
+Journal* Journal::createJournal(uint32_t columnSize) {}
 
 bool Journal::insertJournalRecord() {}
 

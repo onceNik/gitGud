@@ -1,13 +1,12 @@
 #include <iostream>
 #include <cstdlib>
 
-
 class Journal {
+	
 	private:
 		uint64_t rowSize = 2000;
 		uint32_t columnSize;
 		uint64_t** journal;
-		int id;
 	
 	public:
 		Journal(uint32_t);
