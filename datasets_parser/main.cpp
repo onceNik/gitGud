@@ -9,8 +9,6 @@
 #include <inttypes.h>
 #include <cstdint>
 
-typedef unsigned luint32_t;
-typedef unsigned long luint64_t;
 //---------------------------------------------------------------------------
 /// Message types
 typedef enum { Done, DefineSchema, Transaction, ValidationQueries, Flush, Forget } Type_t;
@@ -127,7 +125,7 @@ static void processDefineSchema(DefineSchema_t *s){
 static void processTransaction(Transaction_t *t){
   int i;
   const char* reader = t->operations;
-  printf("Transaction %lu (%u, %u) |", t->transactionId, t->deleteCount, t->insertCount);
+  printf("Transaction %llu (%u, %u) |", t->transactionId, t->deleteCount, t->insertCount);
   for(i=0; i < t->deleteCount; i++) {
     const TransactionOperationDelete_t* o = (TransactionOperationDelete_t*)reader;
     printf("opdel rid %u #rows %u ", o->relationId, o->rowCount);
@@ -143,14 +141,14 @@ static void processTransaction(Transaction_t *t){
   
 }
 static void processValidationQueries(ValidationQueries_t *v){
-  printf("ValidationQueries %lu [%lu, %lu] %u\n", v->validationId, v->from, v->to, v->queryCount);
+  printf("ValidationQueries %llu [%llu, %llu] %u\n", v->validationId, v->from, v->to, v->queryCount);
 }
 static void processFlush(Flush_t *fl){
- printf("Flush %lu\n", fl->validationId);
+ printf("Flush %llu\n", fl->validationId);
 
 }
 static void processForget(Forget_t *fo){
-  printf("Forget %lu\n", fo->transactionId);
+  printf("Forget %llu\n", fo->transactionId);
 
 }
 

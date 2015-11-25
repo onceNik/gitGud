@@ -1,4 +1,4 @@
 # gitGud
 -------------------------
-kids code stuff to gitgud and gitBetter
+kids code stuff to gitgud and gitbetter
 -------------------------
