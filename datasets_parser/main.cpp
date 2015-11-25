@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <inttypes.h>
+#include <cstdint>
 
 typedef unsigned luint32_t;
 typedef unsigned long luint64_t;
@@ -20,7 +21,7 @@ typedef enum { Equal, NotEqual, Less, LessOrEqual, Greater, GreaterOrEqual } Op_
 //---------------------------------------------------------------------------
 typedef struct MessageHead {
    /// Total message length, excluding this head
-   luint32_t messageLen;
+   uint32_t messageLen;
    /// The message type
    Type_t type;
 } MessageHead_t;
@@ -28,17 +29,17 @@ typedef struct MessageHead {
 //---------------------------------------------------------------------------
 typedef struct DefineSchema {
    /// Number of relations
-   luint32_t relationCount;
+   uint32_t relationCount;
    /// Column counts per relation, one count per relation. The first column is always the primary key
-   luint32_t columnCounts[];
+   uint32_t columnCounts[];
 } DefineSchema_t;
 
 //---------------------------------------------------------------------------
 typedef struct Transaction {
    /// The transaction id. Monotonic increasing
-   luint64_t transactionId;
+   uint64_t transactionId;
    /// The operation counts
-   luint32_t deleteCount,insertCount;
+   uint32_t deleteCount,insertCount;
    /// A sequence of transaction operations. Deletes first, total deleteCount+insertCount operations
    char operations[];
 } Transaction_t;
@@ -46,31 +47,31 @@ typedef struct Transaction {
 //---------------------------------------------------------------------------
 typedef struct TransactionOperationDelete {
    /// The affected relation
-   luint32_t relationId;
+   uint32_t relationId;
    /// The row count
-   luint32_t rowCount;
+   uint32_t rowCount;
    /// The deleted values, rowCount primary keyss
-   luint64_t keys[];
+   uint64_t keys[];
 } TransactionOperationDelete_t;
 
 //---------------------------------------------------------------------------
 typedef struct TransactionOperationInsert {
    /// The affected relation
-   luint32_t relationId;
+   uint32_t relationId;
    /// The row count
-   luint32_t rowCount;
+   uint32_t rowCount;
    /// The inserted values, rowCount*relation[relationId].columnCount values
-   luint64_t values[];
+   uint64_t values[];
 } TransactionOperationInsert_t;
 
 //---------------------------------------------------------------------------
 typedef struct ValidationQueries {
    /// The validation id. Monotonic increasing
-   luint64_t validationId;
+   uint64_t validationId;
    /// The transaction range
-   luint64_t from,to;
+   uint64_t from,to;
    /// The query count
-   luint32_t queryCount;
+   uint32_t queryCount;
    /// The queries
    char queries[];
 } ValidationQueries_t;
@@ -78,20 +79,20 @@ typedef struct ValidationQueries {
 //---------------------------------------------------------------------------
 typedef struct Column {
   /// The column id
-  luint32_t column;
+  uint32_t column;
   /// The operations
   Op_t op;
   /// The constant
-  luint64_t value;
+  uint64_t value;
 } Column_t;
 
 //---------------------------------------------------------------------------
 typedef struct Query {
 
    /// The relation
-   luint32_t relationId;
+   uint32_t relationId;
    /// The number of bound columns
-   luint32_t columnCount;
+   uint32_t columnCount;
    /// The bindings
    Column_t columns[];
 } Query_t;
@@ -99,22 +100,22 @@ typedef struct Query {
 //---------------------------------------------------------------------------
 typedef struct Flush {
    /// All validations to this id (including) must be answered
-   luint64_t validationId;
+   uint64_t validationId;
 } Flush_t;
 
 //---------------------------------------------------------------------------
 typedef struct Forget {
    /// Transactions older than that (including) will not be tested for
-   luint64_t transactionId;
+   uint64_t transactionId;
 } Forget_t;
 
 
-static luint32_t* schema = NULL;
+static uint32_t* schema = NULL;
 static void processDefineSchema(DefineSchema_t *s){
   int i;
   printf("DefineSchema %d |", s->relationCount);
   if ( schema == NULL) free(schema);
-  schema = (luint32_t*)malloc(sizeof(luint32_t)*s->relationCount);
+  schema = (uint32_t*)malloc(sizeof(uint32_t)*s->relationCount);
   
   for(i = 0; i < s->relationCount; i++) {
     printf(" %d ",s->columnCounts[i]);
@@ -130,13 +131,13 @@ static void processTransaction(Transaction_t *t){
   for(i=0; i < t->deleteCount; i++) {
     const TransactionOperationDelete_t* o = (TransactionOperationDelete_t*)reader;
     printf("opdel rid %u #rows %u ", o->relationId, o->rowCount);
-    reader+=sizeof(TransactionOperationDelete_t)+(sizeof(luint64_t)*o->rowCount);
+    reader+=sizeof(TransactionOperationDelete_t)+(sizeof(uint64_t)*o->rowCount);
   }
   printf(" \t| ");
   for(i=0; i < t->insertCount; i++) {
     const TransactionOperationInsert_t* o = (TransactionOperationInsert_t*)reader;
     printf("opins rid %u #rows %u |", o->relationId, o->rowCount);
-    reader+=sizeof(TransactionOperationInsert_t)+(sizeof(luint64_t)*o->rowCount*schema[o->relationId]);
+    reader+=sizeof(TransactionOperationInsert_t)+(sizeof(uint64_t)*o->rowCount*schema[o->relationId]);
   }
   printf("\n");
   
@@ -158,7 +159,7 @@ int main(int argc, char **argv) {
 
   MessageHead_t head;
   void *body = NULL;
-  luint32_t len;
+  uint32_t len;
 
     while(1){
       // Retrieve the message head
