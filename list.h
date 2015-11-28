@@ -1,9 +1,13 @@
 #ifndef LIST_H
 #define LIST_H
 
-typedef struct {
+#include <unistd.h>
+#include <inttypes.h>
+#include <cstdint>
+
+typedef struct listItem {
 	uint64_t* ptr;
-	listItem* next;
+	struct listItem* next;
 }listItem;
 
 class List {
@@ -15,6 +19,6 @@ class List {
 		~List();
 		void push(uint64_t, uint64_t*);
 
-}
+};
 
 #endif
