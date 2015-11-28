@@ -36,7 +36,8 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 		}
 		lastInsert++;
 	}
-	for (l = 0 ; l < lastInsert ; l++) {
+	cout << endl;
+	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
 		for (j = 1 ; j < columnSize ; j++) {
 			cout << journal[l][j] << " ";
@@ -50,7 +51,7 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_t id) {
 	
 	uint32_t i,k;
-	uint64_t j;
+	uint64_t j, l;
 	
 	for (i = 0 ; i < o->rowCount ; i++) {
 		for (j = lastInsert ; j >= 0 ; j--) {
@@ -62,7 +63,8 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 		}
 	}
 	lastInsert++;
-	for (l = 0 ; l < lastInsert ; l++) {
+	cout << endl;
+	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
 		for (j = 1 ; j < columnSize ; j++) {
 			cout << journal[l][j] << " ";

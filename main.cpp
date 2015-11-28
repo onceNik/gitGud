@@ -42,7 +42,7 @@ static void processTransaction(Journal** jTable, Transaction_t *t){
 	printf(" \t| ");
 	for(i=0; i < t->insertCount; i++) {
 		const TransactionOperationInsert_t* o = (TransactionOperationInsert_t*)reader;
-		jTable[o->relationId]->insertJournalRecord(o);
+		jTable[o->relationId]->insertJournalRecord(o,t->transactionId);
 		printf("opins rid %u #rows %u |", o->relationId, o->rowCount);
 		reader+=sizeof(TransactionOperationInsert_t)+(sizeof(uint64_t)*o->rowCount*schema[o->relationId]);
 	}
