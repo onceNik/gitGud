@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "structs.h"
+#include "list.h"
 
 class Journal {
 	
@@ -19,7 +20,7 @@ class Journal {
 		bool insertJournalRecord(const TransactionOperationInsert_t*,uint64_t);                		
 		bool insertJournalRecord(const TransactionOperationDelete_t*,uint64_t);
 		bool increaseJournal();
-		List<Record*> getJournalRecords(Journal*, JournalRecord*, int start, int end);
+		List* getJournalRecords(uint64_t,uint64_t);
 
 };
 
