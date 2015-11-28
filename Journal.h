@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include "structs.h"
 
 class Journal {
 	
@@ -15,8 +16,8 @@ class Journal {
 	public:
 		Journal(uint32_t);
 		~Journal();
-		bool insertJournalRecord(TransactionOperationInsert_t*,uint64_t);                		
-		bool insertJournalRecord(TransactionOperationDelete_t*,uint64_t);
+		bool insertJournalRecord(const TransactionOperationInsert_t*,uint64_t);                		
+		bool insertJournalRecord(const TransactionOperationDelete_t*,uint64_t);
 
 		//bool deleteJournalRecord(Journal* , TransactionOperationDelete_t*, +);                		/* inserts Record in Journal, returns success/fail - args pending */
 		//List<Record*> getJournalRecords(Journal* , JournalRecord* , int start, int end, +++);	/* returns a pointer to a list of Records from start to end - args pending */
