@@ -1,8 +1,3 @@
-/*
- * Inspired from SIGMOD Programming Contest 2015.
- * http://db.in.tum.de/sigmod15contest/task.html
- * Simple requests parsing and reporting.
-**/
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
@@ -82,7 +77,6 @@ int main(int argc, char **argv) {
 			len-=(sizeof(head) + head.messageLen);
 		}
 
-      // And interpret it
       switch (head.type) {
          case Done: 
 			printf("\n");
@@ -102,7 +96,7 @@ int main(int argc, char **argv) {
          case Flush: processFlush((Flush_t*)body); break;
          case Forget: processForget((Forget_t*)body); break;
          default:
-         return -1; // crude error handling, should never happen
+         return -1;
       }
     }
 
