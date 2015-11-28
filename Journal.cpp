@@ -10,6 +10,7 @@ Journal::Journal(uint32_t columns) {
 	for(uint64_t i = 0; i < rowSize; i++) {
 		journal[i] = new uint64_t[columnSize];
 	}
+	lastInsert = -1;
 	
 }
 
@@ -22,10 +23,57 @@ Journal::~Journal() {
 	
 }
 
-/*Journal* Journal::createJournal(uint32_t columnSize) {}
+bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_t id) {
+	
+	uint32_t i,j,k;
+	uint64_t l;
+	journal[lastInsert+1][0] = id;
+	k = 0;
+	for (i = 0 ; i < o->rowCount ; i++) {
+		for (j = 1 ; j < columnSize ; j++) {
+			journal[lastInsert+1][j] = o->values[k];
+			k++;
+		}
+		lastInsert++;
+	}
+	for (l = 0 ; l < lastInsert ; l++) {
+		cout << journal[l][0] << ": ";
+		for (j = 1 ; j < columnSize ; j++) {
+			cout << journal[l][j] << " ";
+		}
+		cout << endl;
+	}
+	return true;
+	
+}
 
-bool Journal::insertJournalRecord() {}
+bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_t id) {
+	
+	uint32_t i,k;
+	uint64_t j;
+	
+	for (i = 0 ; i < o->rowCount ; i++) {
+		for (j = lastInsert ; j >= 0 ; j--) {
+			if (journal[j][1] == o->keys[i]) break;
+		}
+		journal[lastInsert+1][0] = id;
+		for (k = 1 ; k < columnSize ; k++) {
+			journal[lastInsert+1][k] = journal[j][k];
+		}
+	}
+	lastInsert++;
+	for (l = 0 ; l < lastInsert ; l++) {
+		cout << journal[l][0] << ": ";
+		for (j = 1 ; j < columnSize ; j++) {
+			cout << journal[l][j] << " ";
+		}
+		cout << endl;
+	}
+	return true;
+	
+}
 
+/*
 bool Journal::deleteJournalRecord() {}
 
 List<kati> Journal::getJournalRecords() {}
@@ -55,6 +103,7 @@ bool Journal::increaseJournal() {
 	journal = newJournal;
 	
 	return true;
-}*/
+}
+*/
 
 
