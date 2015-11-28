@@ -7,7 +7,7 @@ Journal::Journal(uint32_t columns) {
 	rowSize = 2;
 	columnSize = columns;
 	journal = new uint64_t*[rowSize];
-	for(uint64_t i = 0; i < rowSize; i++) {
+	for (uint64_t i = 0 ; i < rowSize ; i++) {
 		journal[i] = new uint64_t[columnSize];
 	}
 	lastInsert = -1;
@@ -16,7 +16,7 @@ Journal::Journal(uint32_t columns) {
 
 Journal::~Journal() {
 	
-	for(uint64_t i = 0; i < rowSize; i++) {
+	for (uint64_t i = 0 ; i < rowSize ; i++) {
 		delete[] journal[i];
 	}
 	delete[] journal;
@@ -65,8 +65,6 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 		lastInsert++;
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
-	
-	
 	cout << endl;
 	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
@@ -82,14 +80,15 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 bool Journal::increaseJournal() {
 	
 	uint64_t newSize, i;
+	uint32_t j;
 	newSize = 2*rowSize;
 	uint64_t** newJournal = new uint64_t*[newSize];
-	for ( i = 0 ; i < newSize; i++) {
+	for (i = 0 ; i < newSize ; i++) {
 		newJournal[i] = new uint64_t[columnSize];
 	}
 	
-	for (i = 0; i < rowSize; i++) {
-		for(uint32_t j = 0; j < columnSize; j++) {
+	for (i = 0; i < rowSize ; i++) {
+		for (j = 0 ; j < columnSize ; j++) {
 			newJournal[i][j] = journal[i][j];
 		}
 	}
@@ -97,7 +96,7 @@ bool Journal::increaseJournal() {
 	uint64_t** temp;
 	temp = journal;
 	journal = newJournal;
-	for (uint64_t i = 0 ; i < rowSize; i++) {
+	for (i = 0 ; i < rowSize; i++) {
 		delete temp[i];
 	}
 	delete temp;
@@ -108,12 +107,6 @@ bool Journal::increaseJournal() {
 	
 }
 
-/*
-bool Journal::deleteJournalRecord() {}
-
-List<kati> Journal::getJournalRecords() {}
-
-bool Journal::destroyJournal() {}
-*/
-
-
+List<kati> Journal::getJournalRecords() {
+	
+}
