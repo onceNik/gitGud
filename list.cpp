@@ -17,11 +17,20 @@ List::~List() {
 void List::push(uint64_t cs, uint64_t* r) {
 
 	listItem* t;
+	listItem* temp;
 	t = new listItem;
 	t->ptr = new uint64_t[cs];
+	temp = listHead;
+	if(temp != NULL) {	
+		while (temp->next != NULL) {
+			temp = temp->next;
+		}
+		temp->next = t;
+	}	
 	for (uint64_t i = 0 ; i < cs ; i++) {
 		t->ptr[i] = r[i];
 	}
+	
 	t->next = NULL;
 	if (listHead == NULL) listHead = t;
 

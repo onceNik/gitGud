@@ -5,6 +5,8 @@
 #include <cstdint>
 #include "Journal.h"
 
+using namespace std;
+
 static uint32_t* schema = NULL;
 static uint32_t schemaSize = 0;
 
@@ -82,7 +84,7 @@ int main(int argc, char **argv) {
 
 		switch (head.type) {
 			case Done:
-				l = jTable[0]->getJournalRecords(0,2);
+				l = jTable[0]->getJournalRecords(0,3);
 				temp = l->get_listHead();
 				while (temp != NULL) {
 					for (uint32_t i = 0 ; i < jTable[0]->get_columnSize() ; i++) {
