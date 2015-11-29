@@ -11,6 +11,7 @@ Journal::Journal(uint32_t columns) {
 		journal[i] = new uint64_t[columnSize];
 	}
 	lastInsert = -1;
+	h = new hashMap();
 	
 }
 
@@ -37,6 +38,7 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 		lastInsert++;
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
+	h->insertHashRecord(journal[lastInsert][1]);
 	cout << endl;
 	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";

@@ -13,6 +13,7 @@ class Journal {
 		uint32_t columnSize;
 		uint64_t** journal;
 		uint64_t lastInsert;
+		hashMap* h;
 	
 	public:
 		Journal(uint32_t);
