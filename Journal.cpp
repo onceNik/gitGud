@@ -119,3 +119,7 @@ List* Journal::getJournalRecords(uint64_t start, uint64_t end) {
 	return l;
 	
 }
+
+uint32_t Journal::get_columnSize() {
+	return columnSize;
+}

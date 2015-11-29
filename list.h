@@ -18,6 +18,7 @@ class List {
 		List();
 		~List();
 		void push(uint64_t, uint64_t*);
+		listItem* get_listHead();
 
 };
 

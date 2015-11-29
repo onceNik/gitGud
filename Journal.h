@@ -21,6 +21,7 @@ class Journal {
 		bool insertJournalRecord(const TransactionOperationDelete_t*,uint64_t);
 		bool increaseJournal();
 		List* getJournalRecords(uint64_t,uint64_t);
+		uint32_t get_columnSize();
 
 };
 

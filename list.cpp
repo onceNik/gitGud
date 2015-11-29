@@ -26,3 +26,7 @@ void List::push(uint64_t cs, uint64_t* r) {
 	if (listHead == NULL) listHead = t;
 
 }
+
+listItem* List::get_listHead() {
+	return listHead;
+}

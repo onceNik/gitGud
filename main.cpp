@@ -64,6 +64,8 @@ int main(int argc, char **argv) {
 	void *body = NULL;
 	uint32_t len;
 	Journal** jTable;
+	List* l;
+	listItem* temp;
 
 	while(1){
 		
@@ -79,7 +81,16 @@ int main(int argc, char **argv) {
 		}
 
 		switch (head.type) {
-			case Done: 
+			case Done:
+				l = jTable[0]->getJournalRecords(0,2);
+				temp = l->get_listHead();
+				while (temp != NULL) {
+					for (uint32_t i = 0 ; i < jTable[0]->get_columnSize() ; i++) {
+						cout << temp->ptr[i];
+					}
+					cout << endl;
+					temp = temp->next;
+				}
 				for (int i = 0 ; i < schemaSize ; i++) {
 					delete jTable[i];
 				}
