@@ -1,32 +1,49 @@
 #ifndef HASH_H
 #define HASH_H
 
+
+class Entry {
+	private:
+		uint64_t tid;
+		uint64_t offset[2];	
+	public:
+		Entry(uint64_t, uint64_t,bool);
+		~Entry();
+		updateEntry(uint64_t,bool);
+		uint64_t get_tid();
+	
+};
+
+
 //////////////////////////////////////////////////
 
 class Bucket {
 	private:
-		int offset[2];
 		int localDepth;
-		uint64_t pk;
+		Entry** entryTable;
+		uint64_t eSize;
+		uint64_t pkey;
 	public:
-		Bucket(uint64_t,int);
+		Bucket(int);
 		~Bucket();
-		bool addtoBucket(unsigned long, Record*);
-		bool relocateEntry(Entry*);
-		void split(Bucket**,int,int,int);
+		bool addToBucket(uint64_t,uint64_t,bool);
+		uint64_t get_pkey();
+		int get_localDepth();
+		void set_pkey(uint64_t);
 };
 
 //////////////////////////////////////////////////
 
 class hashMap {
 	private:
-		Bucket** map;
+		Bucket** hMap;
 		int globalDepth;
-		int size;
+		int hSize;
 	public:
 		hashMap();
 		~hashMap();
-		void insertHashRecord(uint64_t);
+		void insertHashRecord(uint64_t,uint64_t,uint64_t,bool);
+		void doubleMap(uint64_t,uint64_t,uint64_t,bool)
 };
 
 #endif

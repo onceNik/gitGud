@@ -5,72 +5,79 @@
 
 using namespace std;
 
-Bucket::Bucket(uint64_t key, int ld) {
+Entry::Entry(uint64_t id, uint64_t off, bool mode) {
+	tid = id;
+	offset[mode] = off;	
+}
 
-	offset[0] = -1;
-	offset[1] = -1;
+Entry::~Entry() {}
+
+void Entry::updateEntry(uint64_t off, bool mode) {
+	offset[mode] = off;
+}
+
+uint64_t Entry::get_tid() {
+	return tid;
+}
+
+///////////////////////////////////////////////////////
+
+Bucket::Bucket(int ld) {
+
+	pkey = -1;
+	eSize = 5;
+	total = 0;
+	entryTable = (Entry**)malloc(sizeof(Entry)*eSize);
+	for (uint64_t i = 0 ; i < eSize ; i++) {
+		entryTable[i] = NULL;
+	}
 	localDepth = ld;
-	pk = key;
 	
 }
 
-Bucket::~Bucket() {}
+Bucket::~Bucket() {
+	
+	for (uint64_t i = 0 ; i < eSize ; i++) {
+		delete entryTable[i];
+	}
+	free(entryTable);
+	
+}
 
-bool Bucket::addtoBucket(unsigned long id, Record* rec) {
+void Bucket::addToBucket(uint64_t id, uint64_t off, bool mode) {
 	
 	bool succ = false;
-	int i;
-	for (i = 0 ; i < bucketEntries ; i++) {
-		if (table[i] == NULL) {
-			table[i] = new Entry(id,rec);
+	
+	for (uint64_t i = 0 ; i < eSize ; i++) {
+		if (entryTable[i] == NULL) {
+			entryTable[i] = new Entry(id,off,mode);
+			succ = true;
+			break;
+		}
+		else if (id == entryTable[i]->get_tid()) {
+			updateEntry(id,off,mode);
 			succ = true;
 			break;
 		}
 	}
-	if (succ) return succ;
-	if (next != NULL) {
-		succ = next->addtoBucket(id,rec);
-		return succ;
+	if (!succ) {
+		entryTable = (Entry**)realloc(entryTable,sizeof(Entry)*(eSize+1));
+		entryTable[eSize] = new Entry(id,off,mode);
+		eSize++;
 	}
-	else return succ;
 	
 }
 
-bool Bucket::relocateEntry(Entry* e) {
-	
-	bool succ = false;
-	int i;
-	for (i = 0 ; i < bucketEntries ; i++) {
-		if (table[i] == NULL) {
-			table[i] = e;
-			succ = true;
-			break;
-		}
-	}
-	if (succ) return succ;
-	if (next != NULL) {
-		succ = next->relocateEntry(e);
-		return succ;
-	}
-	else return succ;
-	
+uint64_t Bucket::get_pkey() {
+	return pkey;
 }
 
-void Bucket::split(Bucket** map, int p, int sRound, int m) {
-	
-	int i;
-	int index, succ;
-	for (i = 0 ; i < bucketEntries ; i++) {
-		if (table[i] == NULL) continue;
-		index = (table[i]->get_id())%((int)pow(2,sRound+1)*m);
-		if (index != p) {
-			succ = map[index]->relocateEntry(table[i]);
-			if (!succ) map[index]->extendAndLink(table[i]);
-			table[i] = NULL;
-		}
-	}
-	if (next != NULL) next->split(map,p,sRound,m);
-	
+int Bucket::get_localDepth() {
+	return localDepth;
+}
+
+void Bucket::set_pkey(uint64_t key) {
+	pkey = key;
 }
 
 //////////////////////////////////////////////////
@@ -78,14 +85,14 @@ void Bucket::split(Bucket** map, int p, int sRound, int m) {
 hashMap::hashMap() {
 	
 	Bucket* b;
-	size = 2;
-	map = (Bucket**)malloc(sizeof(Bucket)*size);
+	hSize = 2;
+	map = (Bucket**)malloc(sizeof(Bucket)*hSize);
 	if (map == NULL) {
 		cout << "Failed to allocate memory for hash map" << endl;
 		exit(1);
 	}
-	b = new Bucket(-1,0);
-	for (int i = 0 ; i < size ; i++) map[i] = b;
+	b = new Bucket(0);
+	for (int i = 0 ; i < hSize ; i++) map[i] = b;
 	globalDepth = 1;
 	
 }
@@ -99,15 +106,27 @@ hashMap::~hashMap() {
 	
 }
 
-void hashMap::insertHashRecord(uint64_t key) {
+void hashMap::insertHashRecord(uint64_t id, uint64_t key, uint64_t off, bool mode) {
 	
-	int index;
-	bool succ;
-	index = i%((int)pow(2,sRound)*m);
-	if (index < p) index = i%((int)pow(2,sRound+1)*m);
+	uint64_t bit;
 	
-	succ = map[index]->addtoBucket(i,rec);
-	if (!succ) map[index]->addtoOverflow(i,rec);
-	total++;
+	bit = key & ((1 << globalDepth)-1);
+	if (hashMap[bit]->get_pkey() == -1 || hashMap[bit]->get_pkey() == key) {
+		 hashMap[bit]->addToBucket(id,off,mode);
+		 hashMap[bit]->set_pkey(key);
+	 }
+	else {
+		if(hashMap[bit]->get_localDepth() == globalDepth) {
+			doubleMap(id,key,off,mode);
+		}
+		else {
+			splitMap(id,key,off,mode);
+		}
+	}
+}
+
+void hashMap::doubleMap(uint64_t id, uint64_t key, uint64_t off, bool mode) {
+	
+	map = (Bucket**)realloc(map,sizeof(Bucket)*(hSize*2));
 	
 }
