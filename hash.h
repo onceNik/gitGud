@@ -1,7 +1,6 @@
 #ifndef HASH_H
 #define HASH_H
 
-
 class Entry {
 	private:
 		uint64_t tid;
@@ -11,9 +10,8 @@ class Entry {
 		~Entry();
 		updateEntry(uint64_t,bool);
 		uint64_t get_tid();
-	
+		uint64_t* get_offset();
 };
-
 
 //////////////////////////////////////////////////
 
@@ -22,14 +20,14 @@ class Bucket {
 		int localDepth;
 		Entry** entryTable;
 		uint64_t eSize;
-		uint64_t pkey;
 	public:
 		Bucket(int);
 		~Bucket();
 		bool addToBucket(uint64_t,uint64_t,bool);
-		uint64_t get_pkey();
+		bool full();
 		int get_localDepth();
-		void set_pkey(uint64_t);
+		int get_eSize();
+		Entry** get_table();
 };
 
 //////////////////////////////////////////////////
@@ -42,8 +40,8 @@ class hashMap {
 	public:
 		hashMap();
 		~hashMap();
-		void insertHashRecord(uint64_t,uint64_t,uint64_t,bool);
-		void doubleMap(uint64_t,uint64_t,uint64_t,bool)
+		void insertHashRecord(uint64_t**,uint64_t,uint64_t,uint64_t,bool);
+		void doubleMap();
 };
 
 #endif

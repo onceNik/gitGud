@@ -67,7 +67,7 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 		lastInsert++;
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
-	h->insertHashRecord(journal[lastInsert][0],journal[lastInsert][1],lastInsert,1);
+	h->insertHashRecord(journal,journal[lastInsert][0],journal[lastInsert][1],lastInsert,1);
 	cout << endl;
 	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
