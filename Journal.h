@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "structs.h"
 #include "list.h"
+#include "hash.h"
 
 class Journal {
 	

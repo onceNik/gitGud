@@ -8,7 +8,7 @@ class Entry {
 	public:
 		Entry(uint64_t, uint64_t,bool);
 		~Entry();
-		updateEntry(uint64_t,bool);
+		void updateEntry(uint64_t,bool);
 		uint64_t get_tid();
 		uint64_t* get_offset();
 		void printentry();
@@ -21,10 +21,11 @@ class Bucket {
 		int localDepth;
 		Entry** entryTable;
 		uint64_t eSize;
+		uint64_t total;
 	public:
 		Bucket(int);
 		~Bucket();
-		bool addToBucket(uint64_t,uint64_t,bool);
+		bool addToBucket(uint64_t**,uint64_t,uint64_t,uint64_t,bool);
 		bool full();
 		int get_localDepth();
 		int get_eSize();
