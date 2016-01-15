@@ -84,6 +84,7 @@ int main(int argc, char **argv) {
 
 		switch (head.type) {
 			case Done:
+				jTable[0]->printhash();
 				l = jTable[0]->getJournalRecords(0,3);
 				temp = l->get_listHead();
 				while (temp != NULL) {

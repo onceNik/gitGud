@@ -26,6 +26,10 @@ uint64_t* Entry::get_offset() {
 	return offset;
 }
 
+void Entry::printentry() {
+	cout << tid << " " << offset[0] << " " << offset[1] << endl;	
+}
+
 ///////////////////////////////////////////////////////
 
 Bucket::Bucket(int ld) {
@@ -82,6 +86,14 @@ int Bucket::get_eSize() {
 
 Entry** Bucket::get_table() {
 	return entryTable;
+}
+
+void Bucket::printbucket() {
+	
+	for (int i = 0 ; i < eSize ; i++) {
+		entryTable[i]->printentry();
+	}
+	
 }
 
 //////////////////////////////////////////////////
@@ -165,4 +177,11 @@ void hashMap::doubleMap() {
 	hMap = newMap;
 	hSize = 2*hSize;
 	
+}
+
+void hashMap::printhash() {
+	for (int i = 0 ; i < hSize ; i++) {
+		cout << i << ": ";
+		hMap[i]->printbucket();
+	}	
 }

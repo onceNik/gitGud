@@ -11,6 +11,7 @@ class Entry {
 		updateEntry(uint64_t,bool);
 		uint64_t get_tid();
 		uint64_t* get_offset();
+		void printentry();
 };
 
 //////////////////////////////////////////////////
@@ -28,6 +29,7 @@ class Bucket {
 		int get_localDepth();
 		int get_eSize();
 		Entry** get_table();
+		void printbucket();
 };
 
 //////////////////////////////////////////////////
@@ -42,6 +44,7 @@ class hashMap {
 		~hashMap();
 		void insertHashRecord(uint64_t**,uint64_t,uint64_t,uint64_t,bool);
 		void doubleMap();
+		void printhash();
 };
 
 #endif

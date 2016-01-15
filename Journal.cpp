@@ -110,6 +110,10 @@ bool Journal::increaseJournal() {
 	
 }
 
+void Journal::printhash() {
+	h->printhash();
+}
+
 List* Journal::getJournalRecords(uint64_t start, uint64_t end) {
 	
 	List* l;
