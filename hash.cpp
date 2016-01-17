@@ -188,14 +188,6 @@ void hashMap::insertHashRecord(uint64_t** journal, uint64_t id, uint64_t key, ui
 				}
 			}
 		}
-		if (((bit >> hMap[bit]->get_localDepth())&1) == 0){
-			 b1->addToBucket(journal,id,key,off,mode);
-			 cout << "b1" << endl;
-		 }
-		else {
-			cout << "b2" << endl;
-			b2->addToBucket(journal,id,key,off,mode);
-		}
 		for (int i = 0 ; i < hSize ; i++) {
 			cout << "III: " << i << endl;
 			hMap[i]->printbucket();
@@ -216,6 +208,19 @@ void hashMap::insertHashRecord(uint64_t** journal, uint64_t id, uint64_t key, ui
 				}
 			}
 		}
+		bit = key & ((1 << globalDepth)-1);
+		if (((bit >> dlt->get_localDepth())&1) == 0){
+			 if (!(b1->addToBucket(journal,id,key,off,mode))) {
+				insertHashRecord(journal,id,key,off,mode);
+			 }
+			 cout << "b1" << endl;
+		 }
+		else {
+			if (!(b2->addToBucket(journal,id,key,off,mode))) {
+				insertHashRecord(journal,id,key,off,mode);
+			}
+			cout << "b2" << endl;
+		}
 		delete dlt;
 	}
 	printhash();
@@ -227,7 +232,7 @@ void hashMap::doubleMap() {
 	Bucket** newMap = new Bucket*[2*hSize];
 	for (int i = 0 ; i < hSize ; i++) newMap[i] = hMap[i];
 	for (int i = hSize ; i < 2*hSize ; i++) {
-		uint64_t bit = i & ((1 << globalDepth-1)-1);
+		uint64_t bit = i & ((1 << globalDepth)-1);
 		newMap[i] = hMap[bit];
 	}
 	for (int i = 0 ; i < hSize ; i++) hMap[i] = NULL;
