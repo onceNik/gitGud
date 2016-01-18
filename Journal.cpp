@@ -114,10 +114,10 @@ void Journal::printhash() {
 	h->printhash();
 }
 
-List* Journal::getJournalRecords(uint64_t start, uint64_t end) {
+tList* Journal::getJournalRecords(uint64_t start, uint64_t end) {
 	
-	List* l;
-	l = new List;
+	tList* l;
+	l = new tList;
 	for (uint64_t i = 0 ; i <= lastInsert ; i++) {
 		if (journal[i][0] >= start && journal[i][0] <= end) {
 			l->push(columnSize,journal[i]);

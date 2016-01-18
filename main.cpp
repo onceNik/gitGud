@@ -48,8 +48,19 @@ static void processTransaction(Journal** jTable, Transaction_t *t){
 
 }
 
-static void processValidationQueries(ValidationQueries_t *v){
+static void processValidationQueries(vList* l,ValidationQueries_t *v){
+	
 	printf("ValidationQueries %llu [%llu, %llu] %u\n", v->validationId, v->from, v->to, v->queryCount);
+	l->push(v);
+	/*const char* reader = v->queries;
+	for (int i = 0 ; i < v->queryCount ; i++) {
+		const Query_t* o = (Query_t*)reader;
+		printf("Val: relId %u colCount %u \n", o->relationId, o->columnCount);
+		for (int j = 0 ; j < o->columnCount ; j++) {
+			printf("\n%u , %d, %llu\n\n", (o->columns[j]).column, (o->columns[j]).op, (o->columns[j]).value);
+		} 
+		reader+=sizeof(Query_t)+(sizeof(Column_t)*(o->columnCount));
+	}*/
 }
 
 static void processFlush(Flush_t *fl){
@@ -66,9 +77,12 @@ int main(int argc, char **argv) {
 	void *body = NULL;
 	uint32_t len;
 	Journal** jTable;
-	List* l;
-	listItem* temp;
+	tList* l;
+	vList* v;
+	tListItem* temp;
+	vListItem* tmp;
 
+	v = new vList();
 	while(1){
 		
 		if (read(0, &head, sizeof(head)) <= 0) { return -1; }
@@ -86,7 +100,7 @@ int main(int argc, char **argv) {
 			case Done:
 				jTable[0]->printhash();
 				l = jTable[0]->getJournalRecords(0,3);
-				temp = l->get_listHead();
+				temp = l->get_tListHead();
 				while (temp != NULL) {
 					for (uint32_t i = 0 ; i < jTable[0]->get_columnSize() ; i++) {
 						cout << temp->ptr[i];
@@ -99,6 +113,11 @@ int main(int argc, char **argv) {
 				}
 				delete jTable;
 				printf("\n");
+				
+				/////////////////////////////////////////////
+				
+				v->printlist();
+				
 				return 0;
 			case DefineSchema: 
 				processDefineSchema((DefineSchema_t*)body);
@@ -111,7 +130,9 @@ int main(int argc, char **argv) {
 			case Transaction: 
 				processTransaction(jTable,(Transaction_t*)body); 
 				break;
-			case ValidationQueries: processValidationQueries((ValidationQueries_t*)body); break;
+			case ValidationQueries: 
+				processValidationQueries(v,(ValidationQueries_t*)body); 
+				break;
 			case Flush: processFlush((Flush_t*)body); break;
 			case Forget: processForget((Forget_t*)body); break;
 			default:

@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "structs.h"
 #include "list.h"
 #include "hash.h"
 
@@ -22,7 +21,7 @@ class Journal {
 		bool insertJournalRecord(const TransactionOperationInsert_t*,uint64_t);                		
 		bool insertJournalRecord(const TransactionOperationDelete_t*,uint64_t);
 		bool increaseJournal();
-		List* getJournalRecords(uint64_t,uint64_t);
+		tList* getJournalRecords(uint64_t,uint64_t);
 		uint32_t get_columnSize();
 		void printhash();
 
