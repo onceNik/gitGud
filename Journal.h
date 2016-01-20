@@ -21,10 +21,12 @@ class Journal {
 		bool insertJournalRecord(const TransactionOperationInsert_t*,uint64_t);                		
 		bool insertJournalRecord(const TransactionOperationDelete_t*,uint64_t);
 		bool increaseJournal();
+		void printhash();
 		tList* getJournalRecords(uint64_t,uint64_t);
 		uint32_t get_columnSize();
-		void printhash();
-
+		hashMap* get_hashMap();
+		uint64_t** get_journal();
+		
 };
 
 #endif

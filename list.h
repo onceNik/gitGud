@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <cstdint>
+#include <string.h>
 #include "structs.h"
 
 typedef struct tListItem {
@@ -12,8 +13,18 @@ typedef struct tListItem {
 	struct tListItem* next;
 }tListItem;
 
+typedef struct vQuery {
+	uint32_t relationId;
+	uint32_t columnCount;
+	Column_t* columns;	
+}vQuery;
+
 typedef struct vListItem {
-	ValidationQueries_t* ptr;
+	uint64_t valId;
+	uint64_t from;
+	uint64_t to;
+	uint32_t queryCount;
+	vQuery* queries;
 	struct vListItem* next;
 }vListItem;
 

@@ -243,9 +243,17 @@ void hashMap::doubleMap() {
 }
 
 void hashMap::printhash() {
+	
 	cout << endl << endl;
 	for (int i = 0 ; i < hSize ; i++) {
 		cout << i << ": ";
 		hMap[i]->printbucket();
 	}	
+	
+}
+
+Bucket* hashMap::getHashRecords(uint64_t key) {
+	
+	return hMap[key & ((1 << globalDepth)-1)];
+	
 }

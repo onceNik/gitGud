@@ -40,6 +40,7 @@ tListItem* tList::get_tListHead() {
 	return tListHead;
 }
 
+////////////////////////////////////////////////////////////////////////
 
 vList::vList() {
 	vListHead = NULL;
@@ -50,7 +51,10 @@ vList::~vList() {
 	while (vListHead != NULL) {
 		temp = vListHead;
 		vListHead = temp->next;
-		delete temp->ptr;
+		for (int i = 0 ; i < temp->queryCount ; i++) {
+			delete[] temp->queries[i].columns;
+		}
+		delete[] temp->queries;
 		delete temp;
 	}
 }
@@ -59,15 +63,12 @@ void vList::printlist() {
 	
 	vListItem* tmp = vListHead;
 	while (tmp != NULL) {
-		printf("vid: %llu from: %llu to: %u\n",(tmp->ptr)->validationId,(tmp->ptr)->from,(tmp->ptr)->to);
-		const char* reader = (tmp->ptr)->queries;
-		for (int i = 0 ; i < (tmp->ptr)->queryCount ; i++) {
-			const Query_t* o = (Query_t*)reader;
-			printf("Val: relId %u colCount %u \n", o->relationId, o->columnCount);
-			for (int j = 0 ; j < o->columnCount ; j++) {
-				printf("\n%u , %d, %llu\n\n", (o->columns[j]).column, (o->columns[j]).op, (o->columns[j]).value);
+		printf("vid: %llu from: %llu to: %u\n",tmp->valId,tmp->from,tmp->to);
+		for (int i = 0 ; i < tmp->queryCount ; i++) {
+			printf("Val: relId %u colCount %u \n", (tmp->queries)[i].relationId, (tmp->queries)[i].columnCount);
+			for (int j = 0 ; j < (tmp->queries)[i].columnCount ; j++) {
+				printf("\n%u , %d, %llu\n\n", ((tmp->queries)[i]).columns[j].column, ((tmp->queries)[i]).columns[j].op, ((tmp->queries)[i]).columns[j].value);
 			}
-			reader+=sizeof(Query_t)+(sizeof(Column_t)*(o->columnCount));
 		}
 		printf("\n");
 		tmp = tmp->next;
@@ -80,7 +81,6 @@ void vList::push(ValidationQueries_t* v) {
 	vListItem* t;
 	vListItem* temp;
 	t = new vListItem;
-	t->ptr = new ValidationQueries_t;
 	temp = vListHead;
 	if(temp != NULL) {
 		while (temp->next != NULL) {
@@ -88,25 +88,29 @@ void vList::push(ValidationQueries_t* v) {
 		}
 		temp->next = t;
 	}	
-	(t->ptr)->validationId = v->validationId;
-	printf("%llu %llu\n",(t->ptr)->validationId,v->validationId);
-	(t->ptr)->from = v->from;
-	printf("%llu %llu\n",(t->ptr)->from,v->from);
-	(t->ptr)->to = v->to;
-	printf("%llu %llu\n",(t->ptr)->to,v->to);
-	(t->ptr)->queryCount = v->queryCount;
-	printf("%llu %llu\n",(t->ptr)->queryCount,v->queryCount);
+	t->valId = v->validationId;
+	t->from = v->from;
+	t->to = v->to;
+	t->queryCount = v->queryCount;
 	
+	t->queries = new vQuery[t->queryCount];
 	const char* reader = v->queries;
 	for (int i = 0 ; i < v->queryCount ; i++) {
 		const Query_t* o = (Query_t*)reader;
-		((t->ptr)->queries[i]).relationId = o->relationId;
-		((t->ptr)->queries[i]).columnCount = o->columnCount;
+		(t->queries[i]).relationId = o->relationId;
+		(t->queries[i]).columnCount = o->columnCount;
+		printf("Val: relId %u colCount %u | %u  %u\n", o->relationId, o->columnCount, (t->queries[i]).relationId, (t->queries[i]).columnCount);
+		(t->queries[i]).columns = new Column_t[o->columnCount];
 		for (int j = 0 ; j < o->columnCount ; j++) {
+			((t->queries[i]).columns[j]).column = (o->columns[j]).column;
+			((t->queries[i]).columns[j]).op = (o->columns[j]).op;
+			((t->queries[i]).columns[j]).value = (o->columns[j]).value;
 			printf("\n%u , %d, %llu\n\n", (o->columns[j]).column, (o->columns[j]).op, (o->columns[j]).value);
+			printf("\n%u , %d, %llu\n\n", ((t->queries[i]).columns[j]).column, ((t->queries[i]).columns[j]).op, ((t->queries[i]).columns[j]).value);
 		}
 		reader+=sizeof(Query_t)+(sizeof(Column_t)*(o->columnCount));
 	}
+	
 	
 	t->next = NULL;
 	if (vListHead == NULL) vListHead = t;

@@ -20,6 +20,7 @@ Journal::~Journal() {
 	for (uint64_t i = 0 ; i < rowSize ; i++) {
 		delete[] journal[i];
 	}
+	delete h;
 	delete[] journal;
 	
 }
@@ -102,7 +103,7 @@ bool Journal::increaseJournal() {
 	for (i = 0 ; i < rowSize; i++) {
 		delete temp[i];
 	}
-	delete temp;
+	delete[] temp;
 	rowSize = newSize;
 	cout << endl << "increased " << rowSize << endl;
 	
@@ -129,4 +130,12 @@ tList* Journal::getJournalRecords(uint64_t start, uint64_t end) {
 
 uint32_t Journal::get_columnSize() {
 	return columnSize;
+}
+
+hashMap* Journal::get_hashMap() {
+	return h;
+}
+
+uint64_t** Journal::get_journal() {
+	return journal;
 }

@@ -48,9 +48,9 @@ static void processTransaction(Journal** jTable, Transaction_t *t){
 
 }
 
-static void processValidationQueries(vList* l,ValidationQueries_t *v){
+static void processValidationQueries(vList* l, ValidationQueries_t* v) {
 	
-	printf("ValidationQueries %llu [%llu, %llu] %u\n", v->validationId, v->from, v->to, v->queryCount);
+	printf("ValidationQueries %llu [%llu, %llu] %u\n",v->validationId,v->from,v->to,v->queryCount);
 	l->push(v);
 	/*const char* reader = v->queries;
 	for (int i = 0 ; i < v->queryCount ; i++) {
@@ -63,11 +63,90 @@ static void processValidationQueries(vList* l,ValidationQueries_t *v){
 	}*/
 }
 
-static void processFlush(Flush_t *fl){
+static void processFlush(vList* v, Journal** jo, Flush_t *fl) {
+	
 	printf("Flush %llu\n", fl->validationId);
+	vListItem* tmp;
+	Bucket* b;
+	tmp = v->get_vListHead();
+	while (tmp->valId <= fl->validationId) {
+		printf("elegxos\n");
+		int qFlag = 0;	
+		for (int i = 0 ; i < tmp->queryCount ; i++) {
+			int cFlag = 0;
+			for (int j = 0 ; j < (tmp->queries)[i].columnCount ; j++) {
+				if ((((tmp->queries)[i]).columns[j].column == 0) && (((tmp->queries)[i]).columns[j].op == 0)) {
+					b = (jo[(tmp->queries)[i].relationId]->get_hashMap())->getHashRecords(((tmp->queries)[i]).columns[j].value); 
+					for (uint64_t k = 0 ; k < b->get_eSize() ; k++) {
+						printf("%d\n",k);
+						if ((b->get_table())[k] == NULL) continue;
+						if (((b->get_table())[k]->get_tid() < tmp->from) || ((b->get_table())[k]->get_tid() > tmp->to)) continue;
+						else {
+							uint64_t** jrn = jo[(tmp->queries)[i].relationId]->get_journal();
+							uint64_t* off = (b->get_table())[k]->get_offset();
+							if (off[0] != -1) {
+								if (jrn[off[0]][1] == ((tmp->queries)[i]).columns[j].value) {
+									cFlag++;
+									break;
+								}
+							}
+							if (off[1] != -1) {
+								if (jrn[off[1]][1] == ((tmp->queries)[i]).columns[j].value) {
+									cFlag++;
+									break;
+								}
+							}						
+						}
+					}
+				}
+				else {
+					tList* l;
+					tListItem* temp;
+					//MOVE THEM
+					l = jo[(tmp->queries)[i].relationId]->getJournalRecords(tmp->from,tmp->to);
+					temp = l->get_tListHead();
+					while (temp != NULL) {
+						uint64_t vl = temp->ptr[((tmp->queries)[i]).columns[j].column+1];
+						switch(((tmp->queries)[i]).columns[j].op) {
+							case 0:
+								if (vl == ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							case 1:
+								if (vl != ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							case 2:
+								if (vl < ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							case 3:
+								if (vl <= ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							case 4:
+								if (vl > ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							case 5:
+								if (vl >= ((tmp->queries)[i]).columns[j].value) cFlag++;
+								break;
+							default:
+								printf("error\n");
+								break;
+						}								
+						temp = temp->next;
+					}	
+				}
+			}
+			if (cFlag == (tmp->queries)[i].columnCount) {
+				qFlag = 1;
+				break;
+			}
+		}		
+		printf("valId: %d RESULT: %d\n",tmp->valId,qFlag);
+		tmp = tmp->next;
+		if (tmp == NULL) break;
+	}
+	
 }
 
-static void processForget(Forget_t *fo){
+static void processForget(Forget_t *fo) {
 	printf("Forget %llu\n", fo->transactionId);
 }
 
@@ -98,27 +177,23 @@ int main(int argc, char **argv) {
 
 		switch (head.type) {
 			case Done:
-				jTable[0]->printhash();
-				l = jTable[0]->getJournalRecords(0,3);
-				temp = l->get_tListHead();
+				//jTable[0]->printhash();
+				//l = jTable[0]->getJournalRecords(0,3);
+				/*temp = l->get_tListHead();
 				while (temp != NULL) {
 					for (uint32_t i = 0 ; i < jTable[0]->get_columnSize() ; i++) {
 						cout << temp->ptr[i];
 					}
 					cout << endl;
 					temp = temp->next;
-				}
+				}*/
 				for (int i = 0 ; i < schemaSize ; i++) {
 					delete jTable[i];
 				}
-				delete jTable;
-				printf("\n");
-				
-				/////////////////////////////////////////////
-				
+				delete[] jTable;				
 				v->printlist();
-				
-				return 0;
+				delete v;
+				break;
 			case DefineSchema: 
 				processDefineSchema((DefineSchema_t*)body);
 				jTable = new Journal*[schemaSize];
@@ -133,7 +208,9 @@ int main(int argc, char **argv) {
 			case ValidationQueries: 
 				processValidationQueries(v,(ValidationQueries_t*)body); 
 				break;
-			case Flush: processFlush((Flush_t*)body); break;
+			case Flush:
+				processFlush(v,jTable,(Flush_t*)body);
+				break;
 			case Forget: processForget((Forget_t*)body); break;
 			default:
 			return -1;

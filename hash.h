@@ -46,6 +46,7 @@ class hashMap {
 		void insertHashRecord(uint64_t**,uint64_t,uint64_t,uint64_t,bool);
 		void doubleMap();
 		void printhash();
+		Bucket* getHashRecords(uint64_t);
 };
 
 #endif
