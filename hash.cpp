@@ -145,12 +145,12 @@ void hashMap::insertHashRecord(uint64_t** journal, uint64_t id, uint64_t key, ui
 	dlt = hMap[bit];
 	bool succ = hMap[bit]->addToBucket(journal,id,key,off,mode);
 	if (!succ && (hMap[bit]->get_localDepth() == globalDepth)) {
-		cout << "DOUBLE" << endl;
+		//cout << "DOUBLE" << endl;
 		doubleMap();
 		globalDepth++;
 	}
 	if (!succ && (hMap[bit]->get_localDepth() < globalDepth)) {
-		cout << endl << "SPLIT" << endl;
+		//cout << endl << "SPLIT" << endl;
 		uint64_t* temp;
 		uint64_t h;
 		Bucket* b1;
@@ -161,50 +161,50 @@ void hashMap::insertHashRecord(uint64_t** journal, uint64_t id, uint64_t key, ui
 			temp = ((hMap[bit]->get_table())[i])->get_offset();
 			if (temp[0] != -1) {
 				h = (journal[temp[0]][1])&((1 << globalDepth)-1);
-				cout << "H IS " << h << endl;
+				//cout << "H IS " << h << endl;
 				if (((h >> hMap[bit]->get_localDepth())&1) == 0) {
-					cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[0]][1] << " " << temp[0] << endl;
+					//cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[0]][1] << " " << temp[0] << endl;
 					b1->addToBucket(journal,(hMap[bit]->get_table())[i]->get_tid(),journal[temp[0]][1],temp[0],0);
-					cout << "sto 0" << endl;
+					//cout << "sto 0" << endl;
 				}
 				else {
-					cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[0]][1] << " " << temp[0] << endl;
+					//cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[0]][1] << " " << temp[0] << endl;
 					b2->addToBucket(journal,(hMap[bit]->get_table())[i]->get_tid(),journal[temp[0]][1],temp[0],0);
-					cout << "sto 1" << endl;
+					//cout << "sto 1" << endl;
 				}
 			}
 			if (temp[1] != -1) {
-				cout << "bika" << endl;
+				//cout << "bika" << endl;
 				h = (journal[temp[1]][1])&((1 << globalDepth)-1);
 				if (((h >> hMap[bit]->get_localDepth())&1) == 0) {
-					 cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[1]][1] << " " << temp[1] << endl;
+					 //cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[1]][1] << " " << temp[1] << endl;
 					 b1->addToBucket(journal,(hMap[bit]->get_table())[i]->get_tid(),journal[temp[1]][1],temp[1],1);
-					 cout << "sto 0" << endl;
+					 //cout << "sto 0" << endl;
 				 }
 				else { 
-					cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[1]][1] << " " << temp[1] << endl;
+					//cout << endl << "STELNO: " << hMap[bit]->get_table()[i]->get_tid() << " " << journal[temp[1]][1] << " " << temp[1] << endl;
 					b2->addToBucket(journal,(hMap[bit]->get_table())[i]->get_tid(),journal[temp[1]][1],temp[1],1);
-					cout << "sto 1" << endl;
+					//cout << "sto 1" << endl;
 				}
 			}
 		}
 		for (int i = 0 ; i < hSize ; i++) {
-			cout << "III: " << i << endl;
-			hMap[i]->printbucket();
-			dlt->printbucket();
+			//cout << "III: " << i << endl;
+			//hMap[i]->printbucket();
+			//dlt->printbucket();
 			if (hMap[i] == dlt) {
-				cout << "einai" << endl; 
+				//cout << "einai" << endl; 
 				if (((i >> dlt->get_localDepth())&1) == 0) {
-					cout << "poses fores?" << endl;
+					//cout << "poses fores?" << endl;
 					hMap[i] = b1;
-					cout << "test" << endl;
-					hMap[i]->printbucket();
+					//cout << "test" << endl;
+					//hMap[i]->printbucket();
 				}
 				else {
-					cout << "5 fores?" << endl;
+					//cout << "5 fores?" << endl;
 					hMap[i] = b2;
-					cout << "test2" << endl;
-					hMap[i]->printbucket();
+					//cout << "test2" << endl;
+					//hMap[i]->printbucket();
 				}
 			}
 		}
@@ -213,17 +213,17 @@ void hashMap::insertHashRecord(uint64_t** journal, uint64_t id, uint64_t key, ui
 			 if (!(b1->addToBucket(journal,id,key,off,mode))) {
 				insertHashRecord(journal,id,key,off,mode);
 			 }
-			 cout << "b1" << endl;
+			 //cout << "b1" << endl;
 		 }
 		else {
 			if (!(b2->addToBucket(journal,id,key,off,mode))) {
 				insertHashRecord(journal,id,key,off,mode);
 			}
-			cout << "b2" << endl;
+			//cout << "b2" << endl;
 		}
 		delete dlt;
 	}
-	printhash();
+	//printhash();
 	
 }
 

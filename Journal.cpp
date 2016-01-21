@@ -40,14 +40,14 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 		h->insertHashRecord(journal,journal[lastInsert][0],journal[lastInsert][1],lastInsert,0);
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
-	cout << endl;
+	/*cout << endl;
 	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
 		for (j = 1 ; j < columnSize ; j++) {
 			cout << journal[l][j] << " ";
 		}
 		cout << endl;
-	}
+	}*/
 	return true;
 	
 }
@@ -55,12 +55,14 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_t id) {
 	
 	uint32_t i,k;
-	uint64_t j, l;
+	uint64_t l;
+	int j;
 	
 	for (i = 0 ; i < o->rowCount ; i++) {
 		for (j = lastInsert ; j >= 0 ; j--) {
 			if (journal[j][1] == o->keys[i]) break;
 		}
+		if (j == -1) break;
 		journal[lastInsert+1][0] = id;
 		for (k = 1 ; k < columnSize ; k++) {
 			journal[lastInsert+1][k] = journal[j][k];
@@ -69,14 +71,14 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 		h->insertHashRecord(journal,journal[lastInsert][0],journal[lastInsert][1],lastInsert,1);
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
-	cout << endl;
+	/*cout << endl;
 	for (l = 0 ; l <= lastInsert ; l++) {
 		cout << journal[l][0] << ": ";
 		for (j = 1 ; j < columnSize ; j++) {
 			cout << journal[l][j] << " ";
 		}
 		cout << endl;
-	}
+	}*/
 	return true;
 	
 }
@@ -101,11 +103,11 @@ bool Journal::increaseJournal() {
 	temp = journal;
 	journal = newJournal;
 	for (i = 0 ; i < rowSize; i++) {
-		delete temp[i];
+		delete[] temp[i];
 	}
 	delete[] temp;
 	rowSize = newSize;
-	cout << endl << "increased " << rowSize << endl;
+	//cout << endl << "increased " << rowSize << endl;
 	
 	return true;
 	

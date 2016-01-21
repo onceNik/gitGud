@@ -9,7 +9,7 @@ tList::~tList() {
 	while (tListHead != NULL) {
 		temp = tListHead;
 		tListHead = temp->next;
-		delete temp->ptr;
+		delete[] temp->ptr;
 		delete temp;
 	}
 }
@@ -63,14 +63,14 @@ void vList::printlist() {
 	
 	vListItem* tmp = vListHead;
 	while (tmp != NULL) {
-		printf("vid: %llu from: %llu to: %u\n",tmp->valId,tmp->from,tmp->to);
+		//printf("vid: %llu from: %llu to: %u\n",tmp->valId,tmp->from,tmp->to);
 		for (int i = 0 ; i < tmp->queryCount ; i++) {
-			printf("Val: relId %u colCount %u \n", (tmp->queries)[i].relationId, (tmp->queries)[i].columnCount);
+			//printf("Val: relId %u colCount %u \n", (tmp->queries)[i].relationId, (tmp->queries)[i].columnCount);
 			for (int j = 0 ; j < (tmp->queries)[i].columnCount ; j++) {
-				printf("\n%u , %d, %llu\n\n", ((tmp->queries)[i]).columns[j].column, ((tmp->queries)[i]).columns[j].op, ((tmp->queries)[i]).columns[j].value);
+				//printf("\n%u , %d, %llu\n\n", ((tmp->queries)[i]).columns[j].column, ((tmp->queries)[i]).columns[j].op, ((tmp->queries)[i]).columns[j].value);
 			}
 		}
-		printf("\n");
+		//printf("\n");
 		tmp = tmp->next;
 	}
 
@@ -99,14 +99,14 @@ void vList::push(ValidationQueries_t* v) {
 		const Query_t* o = (Query_t*)reader;
 		(t->queries[i]).relationId = o->relationId;
 		(t->queries[i]).columnCount = o->columnCount;
-		printf("Val: relId %u colCount %u | %u  %u\n", o->relationId, o->columnCount, (t->queries[i]).relationId, (t->queries[i]).columnCount);
+		//printf("Val: relId %u colCount %u | %u  %u\n", o->relationId, o->columnCount, (t->queries[i]).relationId, (t->queries[i]).columnCount);
 		(t->queries[i]).columns = new Column_t[o->columnCount];
 		for (int j = 0 ; j < o->columnCount ; j++) {
 			((t->queries[i]).columns[j]).column = (o->columns[j]).column;
 			((t->queries[i]).columns[j]).op = (o->columns[j]).op;
 			((t->queries[i]).columns[j]).value = (o->columns[j]).value;
-			printf("\n%u , %d, %llu\n\n", (o->columns[j]).column, (o->columns[j]).op, (o->columns[j]).value);
-			printf("\n%u , %d, %llu\n\n", ((t->queries[i]).columns[j]).column, ((t->queries[i]).columns[j]).op, ((t->queries[i]).columns[j]).value);
+			//printf("\n%u , %d, %llu\n\n", (o->columns[j]).column, (o->columns[j]).op, (o->columns[j]).value);
+			//printf("\n%u , %d, %llu\n\n", ((t->queries[i]).columns[j]).column, ((t->queries[i]).columns[j]).op, ((t->queries[i]).columns[j]).value);
 		}
 		reader+=sizeof(Query_t)+(sizeof(Column_t)*(o->columnCount));
 	}
