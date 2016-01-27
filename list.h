@@ -1,12 +1,15 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <iostream>
 #include <stdio.h>
 #include <unistd.h>
 #include <inttypes.h>
 #include <cstdint>
 #include <string.h>
 #include "structs.h"
+
+using namespace std;
 
 typedef struct tListItem {
 	uint64_t* ptr;
@@ -36,6 +39,7 @@ class tList {
 		tList();
 		~tList();
 		void push(uint64_t, uint64_t*);
+		void printlist();
 		tListItem* get_tListHead();
 
 };

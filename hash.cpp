@@ -6,12 +6,10 @@
 using namespace std;
 
 Entry::Entry(uint64_t id, uint64_t off, bool mode) {
-	
 	tid = id;
 	offset[0] = -1;
 	offset[1] = -1;
 	offset[mode] = off;
-	
 }
 
 Entry::~Entry() {}
@@ -253,7 +251,5 @@ void hashMap::printhash() {
 }
 
 Bucket* hashMap::getHashRecords(uint64_t key) {
-	
 	return hMap[key & ((1 << globalDepth)-1)];
-	
 }

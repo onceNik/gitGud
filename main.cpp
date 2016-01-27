@@ -50,7 +50,7 @@ static void processTransaction(Journal** jTable, Transaction_t *t){
 
 static void processValidationQueries(vList* l, ValidationQueries_t* v) {
 	
-	//printf("ValidationQueries %llu [%llu, %llu] %u\n",v->validationId,v->from,v->to,v->queryCount);
+	printf("ValidationQueries %llu [%llu, %llu] %u\n",v->validationId,v->from,v->to,v->queryCount);
 	l->push(v);
 	
 }
@@ -172,6 +172,17 @@ int main(int argc, char **argv) {
 
 		switch (head.type) {
 			case Done:
+				tList* t1;
+				tList* t2;				
+				t1 = jTable[0]->getJournalRecords(0,10);
+				t2 = jTable[1]->getJournalRecords(0,10);
+				t1->printlist();
+				cout << endl;
+				t2->printlist();
+			
+				jTable[0]->printhash();
+				jTable[1]->printhash();
+			
 				for (int i = 0 ; i < schemaSize ; i++) {
 					delete jTable[i];
 				}

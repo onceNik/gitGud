@@ -6,7 +6,7 @@ class Entry {
 		uint64_t tid;
 		uint64_t offset[2];	
 	public:
-		Entry(uint64_t, uint64_t,bool);
+		Entry(uint64_t,uint64_t,bool);
 		~Entry();
 		void updateEntry(uint64_t,bool);
 		uint64_t get_tid();

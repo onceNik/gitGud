@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "list.h"
 #include "hash.h"
+#include "thash.h"
 
 class Journal {
 	
@@ -14,6 +15,9 @@ class Journal {
 		uint64_t** journal;
 		uint64_t lastInsert;
 		hashMap* h;
+		
+		//////////PART 2
+		T_hashMap* t;
 	
 	public:
 		Journal(uint32_t);

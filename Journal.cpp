@@ -13,6 +13,9 @@ Journal::Journal(uint32_t columns) {
 	lastInsert = -1;
 	h = new hashMap();
 	
+	//////////PART 2
+	t = new T_hashMap();
+	
 }
 
 Journal::~Journal() {
@@ -38,6 +41,7 @@ bool Journal::insertJournalRecord(const TransactionOperationInsert_t* o, uint64_
 		}
 		lastInsert++;
 		h->insertHashRecord(journal,journal[lastInsert][0],journal[lastInsert][1],lastInsert,0);
+		t->insertHashRecord(journal,journal[lastInsert][0],lastInsert);
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
 	/*cout << endl;
@@ -69,6 +73,7 @@ bool Journal::insertJournalRecord(const TransactionOperationDelete_t* o, uint64_
 		}
 		lastInsert++;
 		h->insertHashRecord(journal,journal[lastInsert][0],journal[lastInsert][1],lastInsert,1);
+		t->insertHashRecord(journal,journal[lastInsert][0],lastInsert);
 		if (lastInsert == rowSize-1) increaseJournal();
 	}
 	/*cout << endl;
@@ -114,7 +119,8 @@ bool Journal::increaseJournal() {
 }
 
 void Journal::printhash() {
-	h->printhash();
+	//h->printhash();
+	t->printhash();
 }
 
 tList* Journal::getJournalRecords(uint64_t start, uint64_t end) {

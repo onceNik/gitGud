@@ -14,6 +14,16 @@ tList::~tList() {
 	}
 }
 
+void tList::printlist() {
+	
+	tListItem* tmp = tListHead;
+	while (tmp != NULL) {
+		cout << tmp->ptr[0] << " " << tmp->ptr[1] << endl;
+		tmp = tmp->next;
+	}
+
+}
+
 void tList::push(uint64_t cs, uint64_t* r) {
 
 	tListItem* t;
